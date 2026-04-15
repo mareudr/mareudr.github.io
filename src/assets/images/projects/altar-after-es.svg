@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img">
+  <rect width="1200" height="900" fill="#edf5f1"/>
+  <rect x="130" y="110" width="940" height="680" rx="28" fill="#6e8894" opacity="0.18"/>
+  <path d="M260 700V270c0-44 36-80 80-80h520c44 0 80 36 80 80v430" fill="none" stroke="#6e8894" stroke-width="22"/>
+  <circle cx="600" cy="420" r="128" fill="#ffffff" opacity=".75"/>
+  <text x="600" y="800" text-anchor="middle" font-family="Georgia, serif" font-size="54" fill="#1c1917">Despues</text>
+</svg>

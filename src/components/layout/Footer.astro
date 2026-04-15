@@ -1,0 +1,25 @@
+---
+import type { Locale } from '../../data/site';
+import { siteCopy } from '../../data/site';
+import SocialLinks from '../ui/SocialLinks.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = siteCopy[locale];
+---
+
+<footer class="page-container pb-10 pt-8 md:pb-14">
+  <div class="rounded-[2rem] border border-neutral-200 bg-white/85 px-6 py-8 shadow-sm backdrop-blur md:px-8">
+    <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <div class="max-w-xl">
+        <p class="eyebrow">{copy.siteTagline}</p>
+        <h2 class="mt-3 font-serif text-3xl text-neutral-900 unselectable" 
+        style="font-family: 'Le Jour Script', cursive;">{copy.siteTitle}</h2>
+      </div>
+      <SocialLinks items={copy.social} />
+    </div>
+  </div>
+</footer>

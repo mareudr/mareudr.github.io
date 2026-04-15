@@ -1,0 +1,64 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { siteCopy } from '../../../data/site';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog-en');
+  return posts.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const copy = siteCopy.en;
+const lang = 'en';
+---
+
+<BaseLayout lang={lang} title={`${entry.data.title} | Maru`} description={entry.data.summary}>
+  <main class="section-block">
+    <article class="page-container max-w-4xl">
+      <!-- Back Link -->
+      <a href="/en/blog/" class="inline-flex items-center text-sm text-neutral-500 hover:text-brand-500 transition-colors mb-12 group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 transition-transform group-hover:-translate-x-1"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        {copy.backToBlogLabel}
+      </a>
+
+      <header class="mb-12">
+        <div class="flex flex-wrap gap-4 items-center mb-6">
+          <time datetime={entry.data.date.toISOString()} class="text-sm text-neutral-400">
+            {entry.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+          </time>
+          <div class="flex gap-2">
+            {entry.data.tags.map(tag => (
+              <span class="text-[10px] uppercase tracking-wider px-2 py-1 bg-neutral-100 text-neutral-500 rounded">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 mb-8 leading-tight">
+          {entry.data.title}
+        </h1>
+        <p class="text-xl text-neutral-600 font-light italic leading-relaxed max-w-2xl">
+          {entry.data.summary}
+        </p>
+      </header>
+
+      <div class="mb-16 rounded-xl overflow-hidden shadow-sm">
+        <Image 
+          src={entry.data.thumbnail} 
+          alt={entry.data.title}
+          class="w-full h-auto object-cover max-h-[600px]"
+        />
+      </div>
+
+      <div class="prose prose-neutral prose-lg max-w-none prose-headings:font-bold prose-headings:text-neutral-900 prose-p:text-neutral-700 prose-p:leading-relaxed prose-img:rounded-lg">
+        <Content />
+      </div>
+    </article>
+  </main>
+</BaseLayout>

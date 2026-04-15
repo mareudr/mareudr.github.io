@@ -1,0 +1,128 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import BeforeAfterSlider from '@components/ui/BeforeAfterSlider.astro';
+import ImageGallery from '@components/ui/ImageGallery.astro';
+import { siteCopy } from '../../../data/site';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects-es');
+  return projects.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const copy = siteCopy.es;
+const lang = 'es';
+
+const beforeImage = entry.data.images.find(img => img.type === 'before');
+const afterImage = entry.data.images.find(img => img.type === 'after');
+const showComparison = entry.data.comparison?.enabled && beforeImage && afterImage;
+---
+
+<BaseLayout lang={lang} title={`${entry.data.title} | Maru`} description={entry.data.summary}>
+  <main class="section-block">
+    <article class="page-container">
+      <!-- Back Link -->
+      <a href="/es/projects/" class="inline-flex items-center text-sm text-neutral-500 hover:text-brand-500 transition-colors mb-12 group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 transition-transform group-hover:-translate-x-1"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        {copy.backToProjectsLabel}
+      </a>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+        <!-- Sidebar: Project Info -->
+        <aside class="lg:col-span-4 order-1 lg:order-1">
+          <div class="lg:sticky lg:top-24 space-y-10">
+            <div>
+              <h1 class="text-4xl md:text-5xl font-bold mb-4">{entry.data.title}</h1>
+              <p class="text-lg text-neutral-600 font-light leading-relaxed">{entry.data.summary}</p>
+            </div>
+
+            <div class="space-y-6 pt-10 border-t border-neutral-100">
+              <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p class="text-neutral-400 uppercase tracking-wider text-[10px] mb-1">{copy.categoryLabel}</p>
+                  <p class="text-neutral-900">{copy.categoryLabels[entry.data.category]}</p>
+                </div>
+                <div>
+                  <p class="text-neutral-400 uppercase tracking-wider text-[10px] mb-1">{copy.dateLabel}</p>
+                  <p class="text-neutral-900">{entry.data.date.toLocaleDateString('es-ES', { year: 'numeric', month: 'long' })}</p>
+                </div>
+                {entry.data.client && (
+                  <div class="col-span-2">
+                    <p class="text-neutral-400 uppercase tracking-wider text-[10px] mb-1">{copy.clientLabel}</p>
+                    <p class="text-neutral-900">{entry.data.client}</p>
+                  </div>
+                )}
+                <div class="col-span-2">
+                  <p class="text-neutral-400 uppercase tracking-wider text-[10px] mb-1">{copy.tagsLabel}</p>
+                  <div class="flex flex-wrap gap-2 mt-1">
+                    {entry.data.tags.map(tag => (
+                      <span class="px-2 py-1 bg-neutral-600 text-white rounded text-[11px]">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Content: Images & Narrative -->
+        <div class="lg:col-span-8 order-2 lg:order-2 space-y-16">
+          <!-- Featured Image or Comparison -->
+          <section>
+            {showComparison ? (
+              <div class="space-y-4">
+                <BeforeAfterSlider 
+                  beforeImage={beforeImage.src} 
+                  afterImage={afterImage.src}
+                  beforeAlt={beforeImage.alt}
+                  afterAlt={afterImage.alt}
+                />
+                <p class="text-center text-xs text-neutral-400 italic">Desliza para comparar el antes y después</p>
+              </div>
+            ) : (
+              <div class="rounded-lg overflow-hidden shadow-sm">
+                <img 
+                  src={entry.data.thumbnail.src} 
+                  alt={entry.data.title}
+                  class="w-full h-auto"
+                />
+              </div>
+            )}
+          </section>
+
+          <!-- Markdown Content -->
+          <section class="prose prose-neutral max-w-none prose-headings:text-neutral-900 prose-p:text-neutral-700 prose-p:leading-relaxed markdown-content">
+            <Content />
+          </section>
+
+          <!-- Image Gallery -->
+          <section class="pt-10 border-t border-neutral-100">
+            <h2 class="text-2xl font-bold mb-8">{copy.projectDetailsLabel}</h2>
+            <ImageGallery images={entry.data.images} locale={lang} />
+          </section>
+        </div>
+      </div>
+    </article>
+  </main>
+</BaseLayout>
+
+<style is:global>
+  .markdown-content p {
+    margin-top: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+  .markdown-content :is(h1, h2, h3, h4, h5, h6) + p {
+    margin-top: 0.75rem !important;
+  }
+  .markdown-content p:first-of-type {
+    margin-top: 0.75rem !important;
+  }
+  .markdown-content p:last-of-type {
+    margin-bottom: 0 !important;
+  }
+</style>

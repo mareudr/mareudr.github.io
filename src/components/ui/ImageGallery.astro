@@ -1,0 +1,144 @@
+---
+import { Image } from 'astro:assets';
+
+interface ProjectImage {
+  src: ImageMetadata;
+  alt: string;
+  type?: 'before' | 'after' | 'detail' | 'process';
+}
+
+interface Props {
+  images: ProjectImage[];
+  locale?: 'en' | 'es';
+}
+
+const { images, locale = 'en' } = Astro.props;
+
+const typeLabels = {
+  en: {
+    before: 'before',
+    after: 'after',
+    detail: 'detail',
+    process: 'process'
+  },
+  es: {
+    before: 'antes',
+    after: 'después',
+    detail: 'detalle',
+    process: 'proceso'
+  }
+};
+
+const labels = typeLabels[locale] || typeLabels.en;
+---
+
+<div class="image-gallery grid grid-cols-1 sm:grid-cols-2 gap-4">
+  {images.map((image, index) => (
+    <div 
+      class={`gallery-item relative overflow-hidden rounded-lg cursor-zoom-in group ${index === 0 ? 'sm:col-span-2' : ''}`}
+      data-index={index}
+    >
+      <Image 
+        src={image.src} 
+        alt={image.alt} 
+        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+      />
+      {image.type && (
+        <span class="absolute bottom-3 left-3 px-2 py-1 text-[10px] uppercase tracking-wider bg-white/90 text-neutral-900 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+          {labels[image.type]}
+        </span>
+      )}
+    </div>
+  ))}
+</div>
+
+<!-- Lightbox Root -->
+<div id="lightbox" class="fixed inset-0 z-50 flex items-center justify-center bg-neutral-900/95 hidden opacity-0 transition-opacity duration-300">
+  <button id="lightbox-close" class="absolute top-6 right-6 text-white hover:text-brand-500 transition-colors">
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+  </button>
+  <button id="lightbox-prev" class="absolute left-6 text-white hover:text-brand-500 transition-colors">
+    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+  </button>
+  <button id="lightbox-next" class="absolute right-6 text-white hover:text-brand-500 transition-colors">
+    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+  </button>
+  <div class="max-w-5xl max-h-[85vh] p-4">
+    <img id="lightbox-img" src="" alt="" class="max-w-full max-h-[80vh] object-contain shadow-2xl" />
+    <p id="lightbox-caption" class="text-white text-center mt-4 text-sm font-light"></p>
+  </div>
+</div>
+
+<script>
+  function setupGallery() {
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
+    const lightboxCaption = document.getElementById('lightbox-caption');
+    const closeBtn = document.getElementById('lightbox-close');
+    const prevBtn = document.getElementById('lightbox-prev');
+    const nextBtn = document.getElementById('lightbox-next');
+
+    let currentIndex = 0;
+    const imagesData = Array.from(galleryItems).map(item => {
+      const img = item.querySelector('img') as HTMLImageElement;
+      return {
+        src: img.src,
+        alt: img.alt
+      };
+    });
+
+    function showImage(index: number) {
+      if (!lightbox || !lightboxImg || !lightboxCaption) return;
+      currentIndex = index;
+      const data = imagesData[index];
+      lightboxImg.src = data.src;
+      lightboxImg.alt = data.alt;
+      lightboxCaption.textContent = data.alt;
+      
+      lightbox.classList.remove('hidden');
+      setTimeout(() => lightbox.classList.add('opacity-100'), 10);
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      if (!lightbox) return;
+      lightbox.classList.remove('opacity-100');
+      setTimeout(() => {
+        lightbox.classList.add('hidden');
+        document.body.style.overflow = '';
+      }, 300);
+    }
+
+    galleryItems.forEach((item, index) => {
+      item.addEventListener('click', () => showImage(index));
+    });
+
+    closeBtn?.addEventListener('click', closeLightbox);
+    lightbox?.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    prevBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const newIndex = (currentIndex - 1 + imagesData.length) % imagesData.length;
+      showImage(newIndex);
+    });
+
+    nextBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const newIndex = (currentIndex + 1) % imagesData.length;
+      showImage(newIndex);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (lightbox?.classList.contains('hidden')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') prevBtn?.click();
+      if (e.key === 'ArrowRight') nextBtn?.click();
+    });
+  }
+
+  setupGallery();
+  document.addEventListener('astro:after-swap', setupGallery);
+</script>

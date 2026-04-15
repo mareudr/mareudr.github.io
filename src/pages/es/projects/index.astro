@@ -1,0 +1,152 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import ProjectCard from '@components/ui/ProjectCard.astro';
+import { siteCopy } from '../../../data/site';
+
+const copy = siteCopy.es;
+const lang = 'es';
+
+const allProjects = await getCollection('projects-es');
+allProjects.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// Get unique categories and tags for filters
+const categories = [...new Set(allProjects.map((p) => p.data.category))];
+const tags = [...new Set(allProjects.flatMap((p) => p.data.tags))].sort();
+---
+
+<BaseLayout lang={lang} title={`${copy.projectsTitle} | Maru`} description={copy.pageDescriptions.projects}>
+  <main class="section-block">
+    <section class="page-container">
+      <header class="mb-12">
+        <h1 class="section-title mb-6">{copy.projectsTitle}</h1>
+        
+        <!-- Filter UI -->
+        <div class="flex flex-wrap gap-4 items-center">
+          <div class="flex flex-wrap gap-2">
+            <button 
+              class="filter-btn active px-4 py-2 rounded-md border border-neutral-200 text-sm transition-all hover:border-brand-500"
+              data-category="all"
+            >
+              {copy.allLabel}
+            </button>
+            {categories.map(cat => (
+              <button 
+                class="filter-btn px-4 py-2 rounded-md border border-neutral-200 text-sm transition-all hover:border-brand-500"
+                data-category={cat}
+              >
+                {copy.categoryLabels[cat]}
+              </button>
+            ))}
+          </div>
+          
+          <div class="h-6 w-[1px] bg-neutral-200 hidden md:block"></div>
+          
+          <div class="flex flex-wrap gap-2">
+            <select 
+              id="tag-filter"
+              class="px-4 py-2 rounded-md border border-neutral-200 text-sm bg-white outline-none focus:border-brand-500"
+            >
+              <option value="all">{copy.filterByTagLabel}</option>
+              {tags.map(tag => (
+                <option value={tag}>{tag}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </header>
+
+      <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {allProjects.map((project) => (
+          <div 
+            class="project-item" 
+            data-category={project.data.category} 
+            data-tags={JSON.stringify(project.data.tags)}
+          >
+            <ProjectCard
+              href={`/es/projects/${project.id}/`}
+              title={project.data.title}
+              summary={project.data.summary}
+              image={project.data.thumbnail}
+              alt={project.data.title}
+              category={copy.categoryLabels[project.data.category]}
+              date={project.data.date}
+              locale={lang}
+            />
+          </div>
+        ))}
+      </div>
+
+      <div id="empty-state" class="hidden py-20 text-center">
+        <p class="text-neutral-500">{copy.projectsEmpty}</p>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  function setupFilters() {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const tagSelect = document.getElementById('tag-filter') as HTMLSelectElement;
+    const projectItems = document.querySelectorAll('.project-item') as NodeListOf<HTMLElement>;
+    const emptyState = document.getElementById('empty-state');
+
+    let currentCategory = 'all';
+    let currentTag = 'all';
+
+    function filter() {
+      let visibleCount = 0;
+      projectItems.forEach(item => {
+        const itemCategory = item.dataset.category;
+        const itemTags = JSON.parse(item.dataset.tags || '[]');
+        
+        const matchesCategory = currentCategory === 'all' || itemCategory === currentCategory;
+        const matchesTag = currentTag === 'all' || itemTags.includes(currentTag);
+
+        if (matchesCategory && matchesTag) {
+          item.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+
+      if (visibleCount === 0) {
+        emptyState?.classList.remove('hidden');
+      } else {
+        emptyState?.classList.add('hidden');
+      }
+    }
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active', 'bg-brand-500', 'text-white', 'border-brand-500'));
+        btn.classList.add('active', 'bg-brand-500', 'text-white', 'border-brand-500');
+        currentCategory = (btn as HTMLElement).dataset.category || 'all';
+        filter();
+      });
+    });
+
+    tagSelect?.addEventListener('change', (e) => {
+      currentTag = (e.target as HTMLSelectElement).value;
+      filter();
+    });
+
+    // Initialize active button style
+    const activeBtn = document.querySelector('.filter-btn.active');
+    if (activeBtn) {
+      activeBtn.classList.add('bg-brand-500', 'text-white', 'border-brand-500');
+    }
+  }
+
+  // Run on initial load
+  setupFilters();
+  // Run on view transitions if enabled
+  document.addEventListener('astro:after-swap', setupFilters);
+</script>
+
+<style>
+  .filter-btn.active {
+    /* Styles are handled by JS to keep it simple with Tailwind classes */
+  }
+</style>

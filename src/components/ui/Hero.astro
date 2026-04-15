@@ -1,0 +1,45 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  heroName: string;
+  heroImage: ImageMetadata;
+  title: string;
+  body: string;
+  primaryHref: string;
+  primaryLabel: string;
+  secondaryHref: string;
+  secondaryLabel: string;
+}
+
+const {
+  heroName,
+  heroImage,
+} = Astro.props;
+---
+
+<section class="relative w-full h-[70vh] min-h-[500px] flex items-center justify-center overflow-hidden mb-16 md:mb-24">
+  <!-- Background Image -->
+  <div class="absolute inset-0 z-0">
+    <Image 
+      src={heroImage} 
+      alt="" 
+      class="w-full h-full object-cover"
+      loading="eager"
+    />
+    <!-- Darker overlay for white text readability -->
+    <div class="absolute inset-0 bg-black/5"></div>
+  </div>
+
+  <!-- Content Overlay -->
+  <div class="relative z-10 page-container text-center">
+    <div class="max-w-4xl mx-auto">
+      <h1 
+        class="text-6xl md:text-8xl lg:text-9xl text-white drop-shadow-lg unselectable"
+        style="font-family: 'Le Jour Script', cursive;"
+      >
+        {heroName}
+      </h1>
+    </div>
+  </div>
+</section>

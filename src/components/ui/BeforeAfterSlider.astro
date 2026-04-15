@@ -1,0 +1,106 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  beforeImage: ImageMetadata;
+  afterImage: ImageMetadata;
+  beforeAlt: string;
+  afterAlt: string;
+}
+
+const { beforeImage, afterImage, beforeAlt, afterAlt } = Astro.props;
+---
+
+<div class="before-after-container relative aspect-project w-full overflow-hidden rounded-lg cursor-col-resize select-none">
+  <!-- After image (bottom) -->
+  <Image 
+    src={afterImage} 
+    alt={afterAlt} 
+    class="absolute inset-0 h-full w-full object-cover"
+    draggable="false"
+  />
+  
+  <!-- Before image (top, clipped) -->
+  <div class="before-wrapper absolute inset-0 h-full w-full overflow-hidden" style="width: 50%;">
+    <Image 
+      src={beforeImage} 
+      alt={beforeAlt} 
+      class="absolute inset-0 h-full w-[200%] max-w-none object-cover pointer-events-none"
+      style="width: 200%;"
+      draggable="false"
+    />
+  </div>
+  
+  <!-- Slider Handle -->
+  <div class="slider-handle absolute inset-y-0 w-1 bg-white shadow-lg pointer-events-none" style="left: 50%;">
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-neutral-900">
+        <path d="m18 8 4 4-4 4M6 8l-4 4 4 4"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<script>
+  function setupBeforeAfter() {
+    const containers = document.querySelectorAll('.before-after-container');
+
+    containers.forEach(container => {
+      const wrapper = container.querySelector('.before-wrapper') as HTMLElement;
+      const handle = container.querySelector('.slider-handle') as HTMLElement;
+      const beforeImg = wrapper.querySelector('img') as HTMLElement;
+
+      let isResizing = false;
+
+      const updateSlider = (x: number) => {
+        const rect = container.getBoundingClientRect();
+        const position = Math.max(0, Math.min(x - rect.left, rect.width));
+        const percentage = (position / rect.width) * 100;
+        
+        wrapper.style.width = `${percentage}%`;
+        handle.style.left = `${percentage}%`;
+        // Keep the before image properly scaled
+        beforeImg.style.width = `${(100 / percentage) * 100}%`;
+      };
+
+      const onMove = (e: MouseEvent | TouchEvent) => {
+        if (!isResizing) return;
+        const x = 'touches' in e ? e.touches[0].clientX : e.clientX;
+        updateSlider(x);
+      };
+
+      const onStart = () => { isResizing = true; };
+      const onEnd = () => { isResizing = false; };
+
+      container.addEventListener('mousedown', onStart);
+      container.addEventListener('touchstart', onStart);
+      
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('touchmove', onMove);
+      
+      window.addEventListener('mouseup', onEnd);
+      window.addEventListener('touchend', onEnd);
+
+      // Initial fix for inner image scaling
+      const fixScale = () => {
+        const percentage = parseFloat(wrapper.style.width);
+        if (beforeImg) {
+          beforeImg.style.width = `${(rect.width / (rect.width * (percentage / 100))) * 100}%`;
+        }
+      };
+      
+      const rect = container.getBoundingClientRect();
+      beforeImg.style.width = `${rect.width}px`;
+      
+      // Responsive handling
+      const observer = new ResizeObserver(() => {
+        const newRect = container.getBoundingClientRect();
+        beforeImg.style.width = `${newRect.width}px`;
+      });
+      observer.observe(container);
+    });
+  }
+
+  setupBeforeAfter();
+  document.addEventListener('astro:after-swap', setupBeforeAfter);
+</script>

@@ -1,0 +1,47 @@
+---
+import Navigation from './Navigation.astro';
+import MobileMenu from './MobileMenu.astro';
+import type { Locale } from '../../data/site';
+import { alternateLocale, siteCopy } from '../../data/site';
+
+interface Props {
+  locale: Locale;
+  currentPath: string;
+}
+
+const { locale, currentPath } = Astro.props;
+const copy = siteCopy[locale];
+const altLocale = alternateLocale[locale];
+const alternatePath = currentPath.replace(`/${locale}/`, `/${altLocale}/`);
+---
+
+<header class="page-container relative z-50 p-6 md:p-8">
+  <div class="flex items-center justify-between rounded-full border border-neutral-200 bg-white/85 px-5 py-4 shadow-sm backdrop-blur">
+    <a href={copy.routes.home} class="min-w-0">
+      <span 
+        class="block text-4xl text-neutral-900 unselectable"
+        style="font-family: 'Le Jour Script', cursive;"
+      >
+        María E. Da Ré
+      </span>
+    </a>
+
+    <div class="hidden items-center gap-6 md:flex">
+      <Navigation items={copy.nav} currentPath={currentPath} />
+      <a
+        href={alternatePath}
+        class="rounded-full border border-neutral-200 px-3 py-2 text-xs font-medium uppercase tracking-[0.2em] text-neutral-700 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-card"
+      >
+        {altLocale.toUpperCase()}
+      </a>
+    </div>
+
+    <MobileMenu
+      items={copy.nav}
+      currentPath={currentPath}
+      label={copy.mobileMenuLabel}
+      locale={locale}
+      alternateHref={alternatePath}
+    />
+  </div>
+</header>

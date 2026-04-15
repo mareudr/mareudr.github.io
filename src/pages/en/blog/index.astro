@@ -1,0 +1,43 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import BlogCard from '@components/ui/BlogCard.astro';
+import { siteCopy } from '../../../data/site';
+
+const copy = siteCopy.en;
+const lang = 'en';
+
+const allPosts = await getCollection('blog-en');
+allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout lang={lang} title={`${copy.blogTitle} | Maru`} description={copy.pageDescriptions.blog}>
+  <main class="section-block">
+    <section class="page-container">
+      <header class="mb-12">
+        <p class="eyebrow mb-4">{copy.blogEyebrow}</p>
+        <h1 class="section-title">{copy.blogTitle}</h1>
+      </header>
+
+      {allPosts.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {allPosts.map((post) => (
+            <BlogCard
+              href={`/en/blog/${post.id}/`}
+              title={post.data.title}
+              summary={post.data.summary}
+              image={post.data.thumbnail}
+              alt={post.data.title}
+              date={post.data.date}
+              locale={lang}
+            />
+          ))}
+        </div>
+      ) : (
+        <div class="py-24 text-center border border-dashed border-neutral-200 rounded-lg">
+          <p class="text-neutral-500 font-light">{copy.blogEmpty}</p>
+        </div>
+      )}
+    </section>
+  </main>
+</BaseLayout>

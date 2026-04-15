@@ -1,0 +1,32 @@
+---
+import type { NavItem } from '../../data/site';
+
+interface Props {
+  items: NavItem[];
+  currentPath: string;
+}
+
+const { items, currentPath } = Astro.props;
+---
+
+<nav aria-label="Primary navigation">
+  <ul class="flex items-center gap-6">
+    {items.map((item) => {
+      const active = currentPath === item.href;
+      return (
+        <li>
+          <a
+            href={item.href}
+            class:list={[
+              'text-sm font-medium uppercase tracking-[0.18em] transition-all duration-300 ease-in-out',
+              active ? 'text-brand-600' : 'text-neutral-700 hover:text-brand-500',
+            ]}
+            aria-current={active ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        </li>
+      );
+    })}
+  </ul>
+</nav>
