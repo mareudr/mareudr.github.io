@@ -18,7 +18,7 @@ comparison:
   enabled: true
 ---
 
-## Contexto:)
+## Contexto
 
 Esta entrada placeholder representa un futuro caso de restauracion. Sirve para validar la estructura bilingue del contenido y avanzar con las paginas antes de contar con el material definitivo.
 
