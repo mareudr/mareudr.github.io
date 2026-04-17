@@ -18,7 +18,7 @@ const copy = siteCopy.en;
 const lang = 'en';
 ---
 
-<BaseLayout lang={lang} title={`${entry.data.title} | Maru`} description={entry.data.summary}>
+<BaseLayout lang={lang} title={`${entry.data.title}`} description={entry.data.summary}>
   <main class="section-block">
     <article class="page-container max-w-4xl">
       <!-- Back Link -->
@@ -34,7 +34,7 @@ const lang = 'en';
           </time>
           <div class="flex gap-2">
             {entry.data.tags.map(tag => (
-              <span class="text-[10px] uppercase tracking-wider px-2 py-1 bg-neutral-100 text-neutral-500 rounded">
+              <span class="text-[10px] uppercase tracking-wider px-2 py-1 bg-neutral-50 text-brand-600 border border-brand-100/50 rounded">
                 {tag}
               </span>
             ))}

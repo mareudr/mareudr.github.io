@@ -15,14 +15,14 @@ const categories = [...new Set(allProjects.map((p) => p.data.category))];
 const tags = [...new Set(allProjects.flatMap((p) => p.data.tags))].sort();
 ---
 
-<BaseLayout lang={lang} title={`${copy.projectsTitle} | Maru`} description={copy.pageDescriptions.projects}>
+<BaseLayout lang={lang} title={`${copy.projectsTitle}`} description={copy.pageDescriptions.projects}>
   <main class="section-block">
     <section class="page-container">
       <header class="mb-12">
         <h1 class="section-title mb-6">{copy.projectsTitle}</h1>
         
         <!-- Filter UI -->
-        <div class="flex flex-wrap gap-4 items-center">
+        <div class="flex flex-col md:flex-row gap-6 md:items-center">
           <div class="flex flex-wrap gap-2">
             <button 
               class="filter-btn active px-4 py-2 rounded-md border border-neutral-200 text-sm transition-all hover:border-brand-500"
@@ -43,15 +43,20 @@ const tags = [...new Set(allProjects.flatMap((p) => p.data.tags))].sort();
           <div class="h-6 w-[1px] bg-neutral-200 hidden md:block"></div>
           
           <div class="flex flex-wrap gap-2">
-            <select 
-              id="tag-filter"
-              class="px-4 py-2 rounded-md border border-neutral-200 text-sm bg-white outline-none focus:border-brand-500"
+            <button 
+              class="tag-btn active px-3 py-1.5 rounded-full border border-neutral-200 text-xs transition-all hover:border-brand-500"
+              data-tag="all"
             >
-              <option value="all">{copy.filterByTagLabel}</option>
-              {tags.map(tag => (
-                <option value={tag}>{tag}</option>
-              ))}
-            </select>
+              {copy.allLabel}
+            </button>
+            {tags.map(tag => (
+              <button 
+                class="tag-btn px-3 py-1.5 rounded-full border border-neutral-200 text-xs transition-all hover:border-brand-500"
+                data-tag={tag}
+              >
+                #{tag}
+              </button>
+            ))}
           </div>
         </div>
       </header>
@@ -87,7 +92,7 @@ const tags = [...new Set(allProjects.flatMap((p) => p.data.tags))].sort();
 <script>
   function setupFilters() {
     const filterBtns = document.querySelectorAll('.filter-btn');
-    const tagSelect = document.getElementById('tag-filter') as HTMLSelectElement;
+    const tagBtns = document.querySelectorAll('.tag-btn');
     const projectItems = document.querySelectorAll('.project-item') as NodeListOf<HTMLElement>;
     const emptyState = document.getElementById('empty-state');
 
@@ -127,15 +132,23 @@ const tags = [...new Set(allProjects.flatMap((p) => p.data.tags))].sort();
       });
     });
 
-    tagSelect?.addEventListener('change', (e) => {
-      currentTag = (e.target as HTMLSelectElement).value;
-      filter();
+    tagBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tagBtns.forEach(b => b.classList.remove('active', 'bg-neutral-900', 'text-white', 'border-neutral-900'));
+        btn.classList.add('active', 'bg-neutral-900', 'text-white', 'border-neutral-900');
+        currentTag = (btn as HTMLElement).dataset.tag || 'all';
+        filter();
+      });
     });
 
-    // Initialize active button style
-    const activeBtn = document.querySelector('.filter-btn.active');
-    if (activeBtn) {
-      activeBtn.classList.add('bg-brand-500', 'text-white', 'border-brand-500');
+    // Initialize active button styles
+    const activeFilterBtn = document.querySelector('.filter-btn.active');
+    if (activeFilterBtn) {
+      activeFilterBtn.classList.add('bg-brand-500', 'text-white', 'border-brand-500');
+    }
+    const activeTagBtn = document.querySelector('.tag-btn.active');
+    if (activeTagBtn) {
+      activeTagBtn.classList.add('bg-neutral-900', 'text-white', 'border-neutral-900');
     }
   }
 

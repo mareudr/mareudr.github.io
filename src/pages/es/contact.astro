@@ -1,12 +1,14 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
 import { siteCopy } from '../../data/site';
+import { Image } from 'astro:assets';
+import contactBg from '../../assets/images/hero/hero-full2.jpg';
 
 const copy = siteCopy.es;
 const lang = 'es';
 ---
 
-<BaseLayout lang={lang} title={`${copy.nav[4].label} | Maru`} description={copy.pageDescriptions.contact}>
+<BaseLayout lang={lang} title={`${copy.nav[4].label}`} description={copy.pageDescriptions.contact}>
   <main class="section-block min-h-[70vh] flex items-center">
     <section class="page-container w-full">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -23,8 +25,18 @@ const lang = 'es';
           </div>
         </div>
 
-        <div class="bg-white border border-neutral-100 p-10 md:p-16 rounded-2xl shadow-sm space-y-12">
-          <div class="space-y-10">
+        <div class="relative overflow-hidden p-10 md:p-16 rounded-2xl shadow-sm border border-neutral-100 flex flex-col justify-center min-h-[450px]">
+          <!-- Artistic Background -->
+          <div class="absolute inset-0 z-0">
+            <Image 
+              src={contactBg} 
+              alt="" 
+              class="w-full h-full object-cover"
+            />
+            <div class="absolute inset-0 bg-white/70 backdrop-blur-[1px]"></div>
+          </div>
+
+          <div class="relative z-10 space-y-10">
             {copy.social.map(item => (
               <div class="group">
                 <p class="text-[10px] uppercase tracking-widest text-neutral-400 mb-3">{item.label}</p>

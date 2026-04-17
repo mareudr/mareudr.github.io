@@ -6,6 +6,11 @@ This file summarizes implementation status and key context so a future AI agent 
 
 ## Current Status
 
+### TODO
+- [ ] Final SEO and accessibility QA.
+- [ ] Add JSON-LD component for structured data.
+- [ ] Add project gallery component (refined lightbox behavior).
+
 ### Completed
 
 - Read and normalized the product requirements in `memory-bank/design-document.md`
@@ -17,6 +22,8 @@ This file summarizes implementation status and key context so a future AI agent 
 - **Redesigned Header:** Replaced title with "María E. Da Ré" in "Le Jour Script" font and removed tagline.
 - **Improved Projects:**
   - Index pages with client-side category and tag filtering.
+  - **Tag Filter Reformulation:** Replaced tag dropdown with interactive pills (buttons) for better UX.
+  - **Featured Logic:** Implemented homepage filtering to only show projects marked as `featured: true` (limited to 4).
   - Dynamic detail routes with Image Gallery and Before/After Slider.
   - **Mobile Optimization:** Reordered project info to the top on mobile.
   - **Typography:** Significantly increased paragraph spacing (2rem) and optimized heading proximity (0.75rem).
@@ -24,7 +31,12 @@ This file summarizes implementation status and key context so a future AI agent 
 - **Bilingual Polish:** Added Spanish translations for image tags (antes, después, etc.) and localized date formatting.
 - **Navigation:** Configured root path to redirect to `/es/`.
 - **Blog:** Implemented index and dynamic detail routes with empty-state support.
+- **Blog Tags:** Updated tag text color to brand-600 with subtle background for better visibility.
 - **Contact:** Implemented dedicated bilingual Contact pages with static details.
+- **Contact Card:** Added an artistic background (`hero-full.jpg`) with a light overlay to the contact card.
+- **Footer:** Updated email to be displayed as plain text instead of a button.
+- **Social Links:** Configured all social network links to open in a new tab.
+- **Branding:** Replaced "Maru" with "María E. Da Ré" in SEO metadata and descriptions.
 - **RSS:** Added combined bilingual RSS route (`/rss.xml`).
 - **Infrastructure:**
   - Installed and configured `@tailwindcss/typography` plugin.
@@ -38,6 +50,7 @@ This file summarizes implementation status and key context so a future AI agent 
 - Site builds 23 static pages plus RSS and sitemap.
 - Mobile menu z-index issues resolved (header set to z-50).
 - Slider dragging/selection issues resolved.
+- Tag filtering (both category and tags) verified on project index pages.
 
 ## Remaining Work
 
@@ -53,11 +66,12 @@ This file summarizes implementation status and key context so a future AI agent 
 
 ## Important Project Decisions
 
-- **Root Redirect:** Site now defaults to Spanish (`/es/`).
+- **Root Landing:** Site now has a temporary "Under Construction" page at the root (`/`). Full bilingual site remains at `/es/` and `/en/`.
 - **Visual Identity:** Primary focus on the custom script font "Le Jour Script" for the artist's name.
 - **Bilingual:** English (`/en/`) and Spanish (`/es/`) routes maintained.
 - **Content:** Managed via Astro Content Collections.
 - **Projects:** Opt-in before/after comparison via frontmatter.
+- **Featured Projects:** Homepage now only displays projects explicitly marked as `featured: true`.
 
 ## Important Technical Decisions
 
@@ -75,6 +89,7 @@ This file summarizes implementation status and key context so a future AI agent 
   - `src/components/ui/ImageGallery.astro`
   - `src/components/ui/ProjectCard.astro`
   - `src/components/ui/BlogCard.astro`
+  - `src/components/ui/SocialLinks.astro`
 - RSS Feed: `src/pages/rss.xml.ts`
 - Deployment: `.github/workflows/deploy.yml`
 
@@ -83,6 +98,7 @@ This file summarizes implementation status and key context so a future AI agent 
 - **Font Loading:** "Le Jour Script" uses an OTF file; ensure filename matches exactly in `global.css`.
 - **Prose Spacing:** Paragraph spacing is forced via global CSS in project templates to override defaults.
 - **Z-Index:** Header is at z-50 to stay above the absolute-positioned Hero.
+- **Filtering Logic:** Project filtering is client-side; ensure `setupFilters` is called on `astro:after-swap` for view transitions.
 
 ## Definition Of Done For Current Milestone
 
@@ -91,5 +107,7 @@ The current milestone is complete because:
 - All bilingual pages are implemented with real layouts and content.
 - Hero and Header match the requested high-impact visual style.
 - Markdown content is readable with proper vertical spacing.
-- Core interactive features are verified and optimized for mobile.
+- Core interactive features (filtering, slider) are verified and optimized.
+- Contact card and Footer reflect the latest stylistic preferences.
 - Build and deployment infrastructure are ready.
+oyment infrastructure are ready.

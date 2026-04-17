@@ -11,7 +11,7 @@ const allPosts = await getCollection('blog-en');
 allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
-<BaseLayout lang={lang} title={`${copy.blogTitle} | Maru`} description={copy.pageDescriptions.blog}>
+<BaseLayout lang={lang} title={`${copy.blogTitle}`} description={copy.pageDescriptions.blog}>
   <main class="section-block">
     <section class="page-container">
       <header class="mb-12">

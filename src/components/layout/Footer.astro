@@ -9,6 +9,9 @@ interface Props {
 
 const { locale } = Astro.props;
 const copy = siteCopy[locale];
+
+const emailItem = copy.social.find(item => item.href.startsWith('mailto:'));
+const otherSocials = copy.social.filter(item => !item.href.startsWith('mailto:'));
 ---
 
 <footer class="page-container pb-10 pt-8 md:pb-14">
@@ -18,8 +21,13 @@ const copy = siteCopy[locale];
         <p class="eyebrow">{copy.siteTagline}</p>
         <h2 class="mt-3 font-serif text-3xl text-neutral-900 unselectable" 
         style="font-family: 'Le Jour Script', cursive;">{copy.siteTitle}</h2>
+        {emailItem && (
+          <a href={emailItem.href} class="mt-4 block text-neutral-600 hover:text-brand-500 transition-colors font-light">
+            {emailItem.href.replace('mailto:', '')}
+          </a>
+        )}
       </div>
-      <SocialLinks items={copy.social} />
+      <SocialLinks items={otherSocials} />
     </div>
   </div>
 </footer>

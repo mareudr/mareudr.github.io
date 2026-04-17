@@ -4,7 +4,6 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import Hero from '@components/ui/Hero.astro';
 import ProjectCard from '@components/ui/ProjectCard.astro';
 import BlogCard from '@components/ui/BlogCard.astro';
-import SocialLinks from '@components/ui/SocialLinks.astro';
 import { siteCopy } from '../../data/site';
 
 const copy = siteCopy.en;
@@ -15,9 +14,10 @@ const [projects, posts] = await Promise.all([
   getCollection('blog-en'),
 ]);
 
-const featuredProjects = [...projects]
+const featuredProjects = projects
+  .filter((entry) => entry.data.featured)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0, 3);
+  .slice(0, 4);
 
 const latestPosts = [...posts]
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())

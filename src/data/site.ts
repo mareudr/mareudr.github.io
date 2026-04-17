@@ -84,7 +84,7 @@ export const siteCopy: Record<Locale, SiteCopy> = {
     aboutTitle: 'A measured presentation for careful work.',
     aboutBody:
       'The site is being shaped around process, documentation, and visual clarity. Placeholder copy stands in for the future professional biography and restoration approach.',
-    aboutLink: 'Open About page',
+    aboutLink: 'More about me',
     blogEyebrow: 'Journal',
     blogTitle: 'Latest notes from the studio',
     blogEmpty: 'Posts will appear here once the first articles are published.',
@@ -117,7 +117,7 @@ export const siteCopy: Record<Locale, SiteCopy> = {
       contact: '/en/contact/',
     },
     pageDescriptions: {
-      home: 'Portfolio of Maru, focused on restoration, conservation, and original artistic work.',
+      home: 'Portfolio of María E. Da Ré, focused on restoration, conservation, and original artistic work.',
       about: 'Learn about the professional practice, background, and approach to art restoration.',
       projects: 'A curated selection of restoration, conservation, and original art projects.',
       blog: 'Notes, reflections, and updates from the studio.',
@@ -140,7 +140,7 @@ export const siteCopy: Record<Locale, SiteCopy> = {
       { href: '/es/', label: 'Inicio' },
       { href: '/es/about/', label: 'Sobre mí' },
       { href: '/es/projects/', label: 'Proyectos' },
-      { href: '/es/blog/', label: 'Blog' },
+      { href: '/es/blog/', label: 'Blogcito' },
       { href: '/es/contact/', label: 'Contacto' },
     ],
     mobileMenuLabel: 'Menú',
@@ -156,9 +156,9 @@ export const siteCopy: Record<Locale, SiteCopy> = {
     aboutTitle: 'Una presentación cuidada para un trabajo meticuloso.',
     aboutBody:
       'El sitio se está organizando alrededor del proceso, la documentación y la claridad visual. Por ahora, el texto es temporal y luego será reemplazado por la biografía profesional y el enfoque de trabajo.',
-    aboutLink: 'Abrir página Sobre mí',
+    aboutLink: 'Más sobre mí',
     blogEyebrow: 'Bitácora',
-    blogTitle: 'Últimas notas del taller',
+    blogTitle: 'Blogcito',
     blogEmpty: 'Las entradas aparecerán aquí cuando se publiquen los primeros artículos.',
     blogLink: 'Ir al blog',
     contactEyebrow: 'Contacto',

@@ -1,3 +1,55 @@
 ---
-return Astro.redirect('/es/');
+import '@styles/global.css';
+import BaseHead from '@components/seo/BaseHead.astro';
+import { Image } from 'astro:assets';
+import heroBg from '../assets/images/hero/hero-full.jpg';
+import { siteCopy } from '../data/site';
+
+const copy = siteCopy.es;
 ---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <BaseHead title={`${copy.siteTitle} | Página en construcción`} description={copy.pageDescriptions.home} />
+  </head>
+  <body class="bg-neutral-900 overflow-hidden">
+    <main class="relative h-screen w-full flex flex-col items-center justify-center text-white text-center px-4">
+      <!-- Background Image -->
+      <div class="absolute inset-0 z-0">
+        <Image 
+          src={heroBg} 
+          alt="María E. Da Ré - Fondo artístico" 
+          class="w-full h-full object-cover"
+          loading="eager"
+          fetchpriority="high"
+        />
+        <!-- Dark overlay to ensure text readability -->
+        <div class="absolute inset-0 bg-black/30"></div>
+      </div>
+
+      <!-- Content -->
+      <div class="relative z-10 space-y-6 animate-fade-in">
+        <h1 class="font-script text-6xl md:text-8xl lg:text-9xl unselectable">
+          María E. Da Ré
+        </h1>
+        <p class="text-sm md:text-base uppercase tracking-[0.4em] font-light opacity-90">
+          Página en construcción
+        </p>
+      </div>
+    </main>
+  </body>
+</html>
+
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in {
+    animation: fadeIn 1.5s ease-out forwards;
+  }
+  .font-script {
+    font-family: 'Le Jour Script', cursive;
+  }
+</style>
